@@ -1,0 +1,119 @@
+<!doctype html>
+<!--
+-*- coding: utf-8 -*-
+vim: set ts=4 sw=4 et sts=4 ai:
+-->
+<!--[if lt IE 7]> <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="en"> <![endif]-->
+<!--[if IE 7]>    <html class="no-js lt-ie9 lt-ie8" lang="en"> <![endif]-->
+<!--[if IE 8]>    <html class="no-js lt-ie9" lang="en"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+	<title>Picasa Video Viewer</title>
+	<meta name="description" content="Small wrapper around to Picasa video viewer.">
+	<meta name="author" content="Tim 'mithro' Ansell <mithro@mithis.com>">
+
+	<meta name="viewport" content="width=device-width">
+
+	<script src="js/libs/modernizr-2.5.3.min.js"></script>
+
+	<style>
+body, html, embed {
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    margin: 0;
+}
+</style>
+
+</head>
+<body>
+<!--[if lt IE 7]><p class=chromeframe>Your browser is <em>ancient!</em> <a href="http://browsehappy.com/">Upgrade to a different browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">install Google Chrome Frame</a> to experience this site.</p><![endif]-->
+
+<script src="js/plugins.js"></script>
+</body>
+
+<script type="text/javascript">
+// Which flash versions are needed for given format
+var FLASH_VERSIONS = {
+    '7/0/0': [5],
+    '9/0/115': [18, 22, 33, 34, 35, 37, 38, 59, 78, 82, 83, 84, 85, 120, 121],
+    '10/1/0': [52, 53, 54, 60],
+    };
+
+// Regex to extract the video format
+var RE_ITAG = /&itag=([0-9]*)&/i;
+
+function get_fmt(content) {
+    var fmt = new Object();
+    fmt.list = new Array();
+    fmt.stream_map = new Array();
+
+    for (var i=0; i < content.length; i++) {
+        var url = content[i]['url'];
+        if (url.search("googlevideo.com/videoplayback") == -1)
+            continue;
+
+        var matches = RE_ITAG.exec(url);
+        var itag = matches[1];
+
+        var resolution = '7/0/0';
+        for (var possible_resolution in FLASH_VERSIONS.length) {
+            if (FLASH_VERSIONS[possible_resolution].indexOf(itag)) {
+                resolution = possible_resolution;
+            }
+        }
+
+        fmt.list.push(itag+'/'+String(content[i].width)+'x'+String(content[i].height)+'/'+resolution);
+        fmt.stream_map.push(itag+'|'+content[i].url.replace(/,/g, '%2C'));
+    }
+
+    fmt.list.reverse();
+    fmt.stream_map.reverse();
+    return fmt;
+}
+
+function get_embed(content) {
+    var fmt = get_fmt(content);
+    var flashvars = new Array();
+    flashvars.push('fs=1');
+    flashvars.push('hl=en');
+    flashvars.push('autoplay=1');
+    flashvars.push('ps=picasaweb');
+    flashvars.push('playerapiid=uniquePlayerId');
+    flashvars.push('fmt_list='+encodeURIComponent(fmt.list.join()));
+    flashvars.push('fmt_stream_map='+encodeURIComponent(fmt.stream_map.join()));
+    flashvars.push('video_id=picasacid');
+    flashvars.push('t=1');
+    flashvars.push('vq=large');
+    flashvars.push('auth_timeout=86400000000');
+
+    var embed = document.createElement('embed');
+    embed.setAttribute("src", "https://www.youtube.com/get_player?enablejsapi=1");
+    embed.setAttribute("type", "application/x-shockwave-flash");
+    embed.setAttribute("allowfullscreen", "true");
+    embed.setAttribute("allowscriptaccess", "always");
+    embed.setAttribute("scale", "noScale");
+    embed.setAttribute("wmode", "opaque");
+    embed.setAttribute("flashvars", flashvars.join("&"));
+    embed.setAttribute("width", "100%");
+    embed.setAttribute("height", "100%");
+    return embed;
+}
+
+function picasa_callback(obj) {
+    document.body.appendChild(get_embed(obj['feed']['media']['content']));
+}
+
+var ts = Math.round((new Date()).getTime() / 1000);
+
+var script = document.createElement('script');
+// hash == user/100642868990821651444/albumid/5720909216955340593/photoid/5720909218315234178
+var hash = document.location.hash;
+var id = hash.substr(1,hash.length);
+script.src = 'https://picasaweb.google.com/data/feed/tiny/'+id+'?authuser=0&alt=jsonm&urlredir=1&commentreason=1&fd=shapes&thumbsize=d&max-results=100&callback=picasa_callback&t='+(Math.round(ts/3600)).toFixed();
+document.body.appendChild(script);
+</script>
+</html>
