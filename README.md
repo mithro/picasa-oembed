@@ -36,3 +36,14 @@ Support for the following Google+ URLs (which use Picasa in the background);
 
      Outputs "rich" element which contains the Picasa album.
 
+
+Picasa Video Support
+==============================================================================
+
+Picasa Video support is a little tricky because the URLs that the Picasa feed
+gives back have authentication tokens which expire after a short period.
+
+To work around this the oEmbed server provides a page which uses javascript to
+re-fetch the authentication tokens when the page is display. This means the
+server will return an iframe element for video elements.
+
