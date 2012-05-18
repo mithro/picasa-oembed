@@ -3,12 +3,15 @@
 # vim: set ts=4 sw=4 et sts=4 ai:
 
 import cgi
+import datetime
+import simplejson
 import re
 import logging
-import simplejson
 import urllib2
 
 import cachepy
+import structured
+
 from google.appengine.api import memcache
 
 
@@ -18,10 +21,12 @@ DICT_COMMON = {
     "provider_url": "http://picasaweb.google.com/",
     }
 
-BASIC_EXTRACT = re.compile('/([0-9]+)/.*?([0-9]+)/.*?([0-9]+)')
-ALBUM_EXTRACT = re.compile('/([0-9]+)/([^#]+)#([0-9]+)')
+ALBUMID_PHOTO_EXTRACT = re.compile('/([0-9]+)/.*?([0-9]+)/.*?([0-9]+)')
+ALBUMNAME_PHOTO_EXTRACT = re.compile('/([0-9]+)/([^#]+)#([0-9]+)')
+ALUBMNAME_ONLY_EXTRACT = re.compile('/([0-9]+)/([^#]+)')
 PICASA_FEED_URL = 'https://picasaweb.google.com/data/feed/tiny/user/%(userid)s/albumid/%(albumid)s/photoid/%(photoid)s?authuser=0&alt=jsonm&urlredir=1&commentreason=1&fd=shapes&thumbsize=%(maxwidth)s&max-results=1'
 
+TIME_FMT = "%a, %d-%b-%Y %H:%M:%S GMT"
 
 def cache(key, func, expire=3600):
     skey = str(key)
@@ -88,7 +93,19 @@ def oembed_dict(l):
     return r
 
 
+"""
+<embed
+    type="application/x-shockwave-flash"
+    src="https://picasaweb.google.com/s/c/bin/slideshow.swf"
+    width="288" height="192"
+    flashvars="host=picasaweb.google.com&captions=1&hl=en_US&feat=flashalbum&RGB=0x000000&feed=https%3A%2F%2Fpicasaweb.google.com%2Fdata%2Ffeed%2Fapi%2Fuser%2F100642868990821651444%2Falbumid%2F5665866868481044945%3Falt%3Drss%26kind%3Dphoto%26hl%3Den_US"
+    pluginspage="http://www.macromedia.com/go/getflashplayer">
+</embed>
+"""
+
+
 def oembed(environ, start_response):
+    now = datetime.datetime.utcnow()
 
     d = cgi.parse_qs(environ['QUERY_STRING'])
 
@@ -100,32 +117,56 @@ def oembed(environ, start_response):
     status = '200 OK'
     headers = []
     if format == 'json':
-        headers.append(('Content-Type', 'text/json'))
+        headers.append(('Content-Type', 'application/json'))
     elif format == 'xml':
         headers.append(('Content-Type', 'text/xml'))
+    headers.append(('Date', now.strftime(TIME_FMT)))
 
-    userid, albumid, photoid = None, None, None
+    input['userid'], input['albumid'], input['albumname'], input['photoid'] = None, None, None, None
     r = ''
 
-    m = BASIC_EXTRACT.search(d.get('url', [''])[0])
-    if m:
-        input['userid'], input['albumid'], input['photoid'] = m.groups()
-    else:
-        status = '404 Not Found'
+    url = d.get('url', [''])[0]
+    albumid_photo = ALBUMID_PHOTO_EXTRACT.search(url)
+    albumname_photo = ALBUMNAME_PHOTO_EXTRACT.search(url)
+    albumname_only = ALUBMNAME_ONLY_EXTRACT.search(url)
 
+    if albumid_photo:
+        input['userid'], input['albumid'], input['photoid'] = albumid_photo.groups()
+
+    if albumname_photo:
+        input['userid'], input['albumname'], input['photoid'] = albumname_photo.groups()
+
+    if albumname_only:
+        input['userid'], input['albumname'] = albumname_only.groups()
+
+    # Get albumid from albumname
+    if input['albumname'] and not input['albumid']:
+        pass
+
+    d = {}
+    d['cache_age'] = 3600
     if input.get('userid', None) and input.get('albumid', None) and input.get('photoid', None):
         try:
-            d = cache(input, oembed_dict)
+            d.update(cache(input, oembed_dict))
 
             if format == 'json':
                 r = simplejson.dumps(d)
             elif format == 'xml':
-                r = '<xml></xml>'
+                r = structured.dict2xml(d, roottag='oembed')
             else:
                 raise IOError('Unknown format')
+
         except (urllib2.URLError, IOError), e:
             status = '401 Unauthorized'
 
+    elif input.get('userid', None) and input.get('albumid', None):
+        pass
+    else:
+        status = '404 Not Found'
+
+    headers.append(('Cache-Control', 'public, max-age=%i, must-revalidate' % d['cache_age']))
+    headers.append(('Last-Modified', now.strftime(TIME_FMT)))
+    headers.append(('Expires', (now+datetime.timedelta(seconds=d['cache_age'])).strftime(TIME_FMT)))
     headers.append(('Content-Length', str(len(r))))
     start_response(status, headers)
     return [r]
