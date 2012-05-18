@@ -6,7 +6,6 @@ import cgi
 import datetime
 import simplejson
 import re
-import logging
 import urllib2
 
 import cachepy
@@ -22,9 +21,12 @@ DICT_COMMON = {
     }
 
 ALBUMID_PHOTO_EXTRACT = re.compile('/([0-9]+)/.*?([0-9]+)/.*?([0-9]+)')
-ALBUMNAME_PHOTO_EXTRACT = re.compile('/([0-9]+)/([^#]+)#([0-9]+)')
+ALBUMNAME_PHOTO_EXTRACT = re.compile('/([0-9]+)/([^#/]+)#([0-9]+)')
 ALUBMNAME_ONLY_EXTRACT = re.compile('/([0-9]+)/([^#]+)')
+ALBUM_FEED_URL = 'https://picasaweb.google.com/%(userid)s/%(albumname)s'
 PICASA_FEED_URL = 'https://picasaweb.google.com/data/feed/tiny/user/%(userid)s/albumid/%(albumid)s/photoid/%(photoid)s?authuser=0&alt=jsonm&urlredir=1&commentreason=1&fd=shapes&thumbsize=%(maxwidth)s&max-results=1'
+
+ALBUMID_EXTRACT = re.compile('albumid/([0-9]+)')
 
 TIME_FMT = "%a, %d-%b-%Y %H:%M:%S GMT"
 
@@ -47,13 +49,18 @@ def cache(key, func, expire=3600):
     return result
 
 
+def albumname2id(input):
+    url = ALBUM_FEED_URL % input
+    picasa_data = urllib2.urlopen(url).read()
+
+    possible_album_ids = ALBUMID_EXTRACT.search(picasa_data)
+    return possible_album_ids.groups()[0]
+
+
 def oembed_dict(l):
     url = PICASA_FEED_URL % l
-    logging.info(url)
     picasa_data = urllib2.urlopen(url).read()
-    logging.info(picasa_data)
     picasa_json = simplejson.loads(picasa_data)['feed']
-    logging.info(picasa_json)
 
     r = dict(DICT_COMMON)
     r["author_name"] = picasa_json['author'][0]['name']
@@ -133,15 +140,15 @@ def oembed(environ, start_response):
     if albumid_photo:
         input['userid'], input['albumid'], input['photoid'] = albumid_photo.groups()
 
-    if albumname_photo:
+    elif albumname_photo:
         input['userid'], input['albumname'], input['photoid'] = albumname_photo.groups()
 
-    if albumname_only:
+    elif albumname_only:
         input['userid'], input['albumname'] = albumname_only.groups()
 
     # Get albumid from albumname
     if input['albumname'] and not input['albumid']:
-        pass
+        input['albumid'] = cache(input, albumname2id)
 
     d = {}
     d['cache_age'] = 3600
