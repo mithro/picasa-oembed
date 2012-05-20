@@ -4,7 +4,7 @@ oEmbed for Picasa
 Supports [oEmbed] output for both photos and videos uploaded to [Picasa].
  
  [oEmbed]: http://oembed.com
- [Picasa]: http://picasaweb.picasaweb.google.com
+ [Picasa]: http://picasaweb.google.com
 
 
 Supported URLs
