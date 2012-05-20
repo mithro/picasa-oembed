@@ -96,7 +96,9 @@ def oembed_dict(l):
             if media['height'] > l['maxheight'] or media['width'] > l['maxwidth']:
                 to_big.append(media)
 
-        picasa_json['media']['content'].remove(to_big)
+        for x in to_big:
+            picasa_json['media']['content'].remove(x)
+
         picasa_json['media']['content'].sort(
             cmp=lambda a, b: cmp((a['width'], a['height']), (b['width'], b['height'])))
 
@@ -104,8 +106,8 @@ def oembed_dict(l):
         r["height"] = picasa_json['media']['content'][-1]['height']
 
         r['html'] = """
-<iframe src="/static/embed.html#user/%(userid)s/albumid/%(albumid)s/photoid/%(photoid)s" style="width: 100%; height: 100%;" ></iframe>
-"""
+<iframe src="picasa-oembed.appspot.com/static/embed.html#user/%(userid)s/albumid/%(albumid)s/photoid/%(photoid)s" style="width: 100%%; height: 100%%;" ></iframe>
+""" % l
         # Only cache for 1 hour due to the expiring auth keys
         r["cache_age"] = 3600
     else:
