@@ -22,7 +22,7 @@ __author__ = "mithro@mithis.com (Tim 'mithro' Ansell)"
 
 import oembed
 
-DEBUG = True
+DEBUG = False
 
 LIVE = 'http://picasaweb-oembed.appspot.com/'
 LOCAL = 'http://localhost:8080/'
@@ -32,13 +32,19 @@ URLS = ['http://picasaweb.google.com/*',
         'http://plus.google.com/photos/*',
         'https://plus.google.com/photos/*']
 
+SERVER = [LIVE, LOCAL][DEBUG]
+print "Testing against: %s" % SERVER
 consumer = oembed.OEmbedConsumer()
-endpoint = oembed.OEmbedEndpoint([LIVE, LOCAL][DEBUG], URLS)
+endpoint = oembed.OEmbedEndpoint(SERVER, URLS)
 consumer.addEndpoint(endpoint)
 
-response = consumer.embed('https://plus.google.com/photos/100642868990821651444/albums/5720909216955340593/5720909219460239298')
+try:
+    response = consumer.embed('https://plus.google.com/photos/100642868990821651444/albums/5720909216955340593/5720909219460239298')
 
-import pprint
-pprint.pprint(response.getData())
-print response['url']
+    # 'https://picasaweb.google.com/100642868990821651444/Me#5665867008065765906'
+    import pprint
+    pprint.pprint(response.getData())
+except IOError, e:
+    print e
+    print e.geturl()
 
