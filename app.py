@@ -106,7 +106,7 @@ def oembed_dict(l):
         r["height"] = picasa_json['media']['content'][-1]['height']
 
         r['html'] = """
-<iframe src="picasa-oembed.appspot.com/static/embed.html#user/%(userid)s/albumid/%(albumid)s/photoid/%(photoid)s" style="width: 100%%; height: 100%%;" ></iframe>
+<iframe src="picasaweb-oembed.appspot.com/static/embed.html#user/%(userid)s/albumid/%(albumid)s/photoid/%(photoid)s" style="width: 100%%; height: 100%%;" ></iframe>
 """ % l
         # Only cache for 1 hour due to the expiring auth keys
         r["cache_age"] = 3600
