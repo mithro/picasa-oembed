@@ -20,7 +20,11 @@
 
 import cgi
 import datetime
-import simplejson
+try:
+    import json
+except ImportError
+    import simplejson as json
+
 import re
 import urllib2
 
@@ -78,7 +82,7 @@ def albumname2id(input):
 def oembed_dict(l):
     url = PICASA_FEED_URL % l
     picasa_data = urllib2.urlopen(url).read()
-    picasa_json = simplejson.loads(picasa_data)['feed']
+    picasa_json = json.loads(picasa_data)['feed']
 
     r = dict(DICT_COMMON)
     r["author_name"] = picasa_json['author'][0]['name']
@@ -106,7 +110,7 @@ def oembed_dict(l):
         r["height"] = picasa_json['media']['content'][-1]['height']
 
         r['html'] = """
-<iframe src="picasa-oembed.appspot.com/static/embed.html#user/%(userid)s/albumid/%(albumid)s/photoid/%(photoid)s" style="width: 100%%; height: 100%%;" ></iframe>
+<iframe src="picasaweb-oembed.appspot.com/static/embed.html#user/%(userid)s/albumid/%(albumid)s/photoid/%(photoid)s" style="width: 100%%; height: 100%%;" ></iframe>
 """ % l
         # Only cache for 1 hour due to the expiring auth keys
         r["cache_age"] = 3600
@@ -177,7 +181,7 @@ def oembed(environ, start_response):
             d.update(cache(input, oembed_dict))
 
             if format == 'json':
-                r = simplejson.dumps(d)
+                r = json.dumps(d)
             elif format == 'xml':
                 r = structured.dict2xml(d, roottag='oembed')
             else:
