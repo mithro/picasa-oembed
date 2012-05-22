@@ -22,7 +22,7 @@ import cgi
 import datetime
 try:
     import json
-except ImportError
+except ImportError:
     import simplejson as json
 
 import re
