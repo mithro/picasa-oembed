@@ -7,4 +7,4 @@ src/
 tags
 build/
 .Python
-static/index.html.part
+static/index.html

@@ -1,0 +1,4 @@
+python-oembed
+Markdown
+simplejson
+Jinja2

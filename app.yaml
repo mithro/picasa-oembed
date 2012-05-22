@@ -16,6 +16,10 @@ handlers:
   static_files: static/\1.txt
   upload: static/(.*\.txt)
 
+- url: /
+  static_files: static/index.html
+  upload: static/index.html
+
 - url: /.*
   script: app.oembed
 
