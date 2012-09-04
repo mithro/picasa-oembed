@@ -47,8 +47,10 @@ DICT_COMMON = {
     }
 
 
-ALBUM_FEED_URL = 'https://picasaweb.google.com/%(userid)s/%(albumname)s'
-PICASA_FEED_URL = 'https://picasaweb.google.com/data/feed/tiny/user/%(userid)s/albumid/%(albumid)s/photoid/%(photoid)s?authuser=0&alt=jsonm&urlredir=1&commentreason=1&fd=shapes&thumbsize=%(maxwidth)s&max-results=1'
+ALBUM_NAME_URL = 'https://picasaweb.google.com/%(userid)s/%(albumname)s'
+
+ALBUM_FEED_URL = 'https://picasaweb.google.com/data/feed/tiny/user/%(userid)s/albumid/%(albumid)s?authuser=0&alt=jsonm&urlredir=1&commentreason=1&fd=shapes&thumbsize=%(maxwidth)s'
+PHOTO_FEED_URL = 'https://picasaweb.google.com/data/feed/tiny/user/%(userid)s/albumid/%(albumid)s/photoid/%(photoid)s?authuser=0&alt=jsonm&urlredir=1&commentreason=1&fd=shapes&thumbsize=%(maxwidth)s&max-results=1'
 
 ALBUMID_EXTRACT = re.compile('albumid/([0-9]+)')
 
@@ -73,17 +75,17 @@ def cache(key, func, expire=3600):
     return result
 
 
-def albumname2id(input):
-    url = ALBUM_FEED_URL % input
+def albumname2id(l):
+    url = ALBUM_NAME % l
     logging.debug('Album url %r', url)
     picasa_data = urllib2.urlopen(url).read()
 
-    possible_album_ids = searches.ALBUMID_EXTRACT.search(picasa_data)
+    possible_album_ids = ALBUMID_EXTRACT.search(picasa_data)
     return possible_album_ids.groups()[0]
 
 
-def oembed_dict(l):
-    url = PICASA_FEED_URL % l
+def oembed_single(l):
+    url = PHOTO_FEED_URL % l
     logging.debug('Album url %r', url)
     picasa_data = urllib2.urlopen(url).read()
     picasa_json = json.loads(picasa_data)['feed']
@@ -128,15 +130,30 @@ def oembed_dict(l):
     return r
 
 
-"""
+def oembed_album(l):
+    url = ALBUM_FEED_URL % l
+    logging.debug('Album url %r', url)
+    picasa_data = urllib2.urlopen(url).read()
+    picasa_json = json.loads(picasa_data)['feed']
+
+    r = dict(DICT_COMMON)
+    r["type"] = 'rich'
+    r["author_name"] = picasa_json['nickname']
+    r["author_url"] = "https://plus.google.com/%s/posts" % l['userid']
+    r["title"] = picasa_json['title']
+    r["thumbnail_url"] = picasa_json['icon']
+    r['html'] = """
 <embed
     type="application/x-shockwave-flash"
     src="https://picasaweb.google.com/s/c/bin/slideshow.swf"
     width="288" height="192"
-    flashvars="host=picasaweb.google.com&captions=1&hl=en_US&feat=flashalbum&RGB=0x000000&feed=https%3A%2F%2Fpicasaweb.google.com%2Fdata%2Ffeed%2Fapi%2Fuser%2F100642868990821651444%2Falbumid%2F5665866868481044945%3Falt%3Drss%26kind%3Dphoto%26hl%3Den_US"
+    flashvars="host=picasaweb.google.com&captions=1&hl=en_US&feat=flashalbum&RGB=0x000000&feed=https%%3A%%2F%%2Fpicasaweb.google.com%%2Fdata%%2Ffeed%%2Fapi%%2Fuser%%2F%(userid)s%%2Falbumid%%2F%(albumid)s%%3Falt%%3Drss%%26kind%%3Dphoto%%26hl%%3Den_US"
     pluginspage="http://www.macromedia.com/go/getflashplayer">
 </embed>
-"""
+""" % l
+    r["width"] = l['maxwidth']
+    r["height"] = l['maxheight']
+    return r
 
 
 def oembed(environ, start_response):
@@ -188,28 +205,34 @@ def oembed(environ, start_response):
         logging.debug('Getting albumid from name: %r', input['albumname'])
         input['albumid'] = cache(input, albumname2id)
 
+    logging.debug(input)
+
     d = {}
     d['cache_age'] = 3600
     if input.get('userid', None) and input.get('albumid', None) and input.get('photoid', None):
         logging.debug('Found a single photo.')
         try:
-            d.update(cache(input, oembed_dict))
-
-            if format == 'json':
-                r = json.dumps(d)
-            elif format == 'xml':
-                r = structured.dict2xml(d, roottag='oembed')
-            else:
-                raise IOError('Unknown format')
-
+            d.update(cache(input, oembed_single))
         except (urllib2.URLError, IOError), e:
             status = '401 Unauthorized'
-
+            d = {}
     elif input.get('userid', None) and input.get('albumid', None):
         logging.debug('Found a whole album.')
-        pass
+        try:
+            d.update(cache(input, oembed_album))
+        except (urllib2.URLError, IOError), e:
+            status = '401 Unauthorized'
+            d = {}
     else:
         status = '404 Not Found'
+        d = {}
+
+    if format == 'json':
+        r = json.dumps(d)
+    elif format == 'xml':
+        r = structured.dict2xml(d, roottag='oembed')
+    else:
+        raise IOError('Unknown format')
 
     headers.append(('Cache-Control', 'public, max-age=%i, must-revalidate' % d['cache_age']))
     headers.append(('Last-Modified', now.strftime(TIME_FMT)))
