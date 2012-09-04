@@ -39,9 +39,6 @@ endpoint = oembed.OEmbedEndpoint(SERVER, URLS)
 consumer.addEndpoint(endpoint)
 
 # * http(s)://picasaweb.google.com/{userid}/{albumname}
-assert 
-
-
 # Outputs "rich" element which contains the Picasa album.
 
 # * http(s)://picasaweb.google.com/{userid}/{albumname}#{photoid}

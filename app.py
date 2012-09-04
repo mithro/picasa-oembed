@@ -26,12 +26,16 @@ except ImportError:
     import simplejson as json
 
 import re
+import logging
 import urllib2
 
 import cachepy
 import structured
+import searches
 
 from google.appengine.api import memcache
+
+
 
 __author__ = "mithro@mithis.com (Tim 'mithro' Ansell)"
 
@@ -42,9 +46,7 @@ DICT_COMMON = {
     "provider_url": "http://picasaweb.google.com/",
     }
 
-ALBUMID_PHOTO_EXTRACT = re.compile('/([0-9]+)/.*?([0-9]+)/.*?([0-9]+)')
-ALBUMNAME_PHOTO_EXTRACT = re.compile('/([0-9]+)/([^#/]+)#([0-9]+)')
-ALUBMNAME_ONLY_EXTRACT = re.compile('/([0-9]+)/([^#]+)')
+
 ALBUM_FEED_URL = 'https://picasaweb.google.com/%(userid)s/%(albumname)s'
 PICASA_FEED_URL = 'https://picasaweb.google.com/data/feed/tiny/user/%(userid)s/albumid/%(albumid)s/photoid/%(photoid)s?authuser=0&alt=jsonm&urlredir=1&commentreason=1&fd=shapes&thumbsize=%(maxwidth)s&max-results=1'
 
@@ -73,14 +75,16 @@ def cache(key, func, expire=3600):
 
 def albumname2id(input):
     url = ALBUM_FEED_URL % input
+    logging.debug('Album url %r', url)
     picasa_data = urllib2.urlopen(url).read()
 
-    possible_album_ids = ALBUMID_EXTRACT.search(picasa_data)
+    possible_album_ids = searches.ALBUMID_EXTRACT.search(picasa_data)
     return possible_album_ids.groups()[0]
 
 
 def oembed_dict(l):
     url = PICASA_FEED_URL % l
+    logging.debug('Album url %r', url)
     picasa_data = urllib2.urlopen(url).read()
     picasa_json = json.loads(picasa_data)['feed']
 
@@ -157,9 +161,15 @@ def oembed(environ, start_response):
     r = ''
 
     url = d.get('url', [''])[0]
-    albumid_photo = ALBUMID_PHOTO_EXTRACT.search(url)
-    albumname_photo = ALBUMNAME_PHOTO_EXTRACT.search(url)
-    albumname_only = ALUBMNAME_ONLY_EXTRACT.search(url)
+    logging.debug('url %r', url)
+    albumid_photo = searches.ALBUMID_PHOTO_EXTRACT.search(url)
+    logging.debug('extracted albumid_photo %r', albumid_photo)
+    albumname_photo = searches.ALBUMNAME_PHOTO_EXTRACT.search(url)
+    logging.debug('extracted albumname_photo %r', albumname_photo)
+    albumid_only = searches.ALBUMID_ONLY_EXTRACT.search(url)
+    logging.debug('extracted albumid_only %r', albumid_photo)
+    albumname_only = searches.ALBUMNAME_ONLY_EXTRACT.search(url)
+    logging.debug('extracted albumname_only %r', albumname_photo)
 
     if albumid_photo:
         input['userid'], input['albumid'], input['photoid'] = albumid_photo.groups()
@@ -167,16 +177,21 @@ def oembed(environ, start_response):
     elif albumname_photo:
         input['userid'], input['albumname'], input['photoid'] = albumname_photo.groups()
 
+    elif albumid_only:
+        input['userid'], input['albumid'] = albumid_only.groups()
+
     elif albumname_only:
         input['userid'], input['albumname'] = albumname_only.groups()
 
     # Get albumid from albumname
     if input['albumname'] and not input['albumid']:
+        logging.debug('Getting albumid from name: %r', input['albumname'])
         input['albumid'] = cache(input, albumname2id)
 
     d = {}
     d['cache_age'] = 3600
     if input.get('userid', None) and input.get('albumid', None) and input.get('photoid', None):
+        logging.debug('Found a single photo.')
         try:
             d.update(cache(input, oembed_dict))
 
@@ -191,6 +206,7 @@ def oembed(environ, start_response):
             status = '401 Unauthorized'
 
     elif input.get('userid', None) and input.get('albumid', None):
+        logging.debug('Found a whole album.')
         pass
     else:
         status = '404 Not Found'

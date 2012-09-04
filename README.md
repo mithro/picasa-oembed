@@ -28,7 +28,7 @@ the oEmbed server and you'll get album mode.
 
 Support for the following Google+ URLs (which use Picasa in the background);
 
- * https://plus.google.com/photos/{userid}/albums/{albumid}/{userid}
+ * https://plus.google.com/photos/{userid}/albums/{albumid}/{photoid}
 
      Outputs "photo" or "video" element which contains the Photo/Video.
 
