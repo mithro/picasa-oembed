@@ -2,3 +2,4 @@ python-oembed
 Markdown
 simplejson
 Jinja2
+mock

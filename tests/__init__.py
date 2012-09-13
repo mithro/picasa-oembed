@@ -1,1 +1,1 @@
-from app_tests import TestSearches
+from app_tests import *

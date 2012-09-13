@@ -1,0 +1,98 @@
+{
+    "encoding": "UTF-8",
+    "feed": {
+        "id": "https://picasaweb.google.com/data/feed/tiny/user/111415681122206252267/albumid/5782876990269415361/photoid/5782876989650158754",
+        "title": "sample_sorenson.mov",
+        "link": [{
+            "rel": "http://schemas.google.com/g/2005#feed",
+            "type": "application/atom+xml",
+            "href": "https://picasaweb.google.com/data/feed/tiny/user/111415681122206252267/albumid/5782876990269415361/photoid/5782876989650158754?alt=jsonm"
+        }, {
+            "rel": "alternate",
+            "type": "text/html",
+            "href": "https://picasaweb.google.com/lh/photo/6wQGLoakmKV3nNEFuKI3htMTjNZETYmyPJy0liipFm0"
+        }, {
+            "rel": "self",
+            "type": "application/atom+xml",
+            "href": "https://picasaweb.google.com/data/feed/tiny/user/111415681122206252267/albumid/5782876990269415361/photoid/5782876989650158754?alt=jsonm&start-index=1&max-results=1&urlredir=1&thumbsize=640&commentreason=1&fd=shapes"
+        }],
+        "author": [{
+            "type": "owner",
+            "name": "Bayu Adji",
+            "uri": "https://picasaweb.google.com/111415681122206252267",
+            "email": "111415681122206252267",
+            "nickname": "Bayu Adji",
+            "thumbnail": "https://lh3.googleusercontent.com/-PlbEGa3K3j4/AAAAAAAAAAI/AAAAAAAAAAA/N9EJMCeXgBE/s32-c/111415681122206252267.jpg",
+            "user": "111415681122206252267",
+            "link": [{
+                "rel": "http://schemas.google.com/photos/2007#userProfile",
+                "type": "text/html",
+                "href": "https://profiles.google.com/111415681122206252267"
+            }]
+        }],
+        "totalResults": 0,
+        "gphoto$id": "5782876989650158754",
+        "albumId": "5782876990269415361",
+        "albumInfo": [{
+            "id": "5782876990269415361",
+            "title": "August 31, 2012",
+            "url": "https://picasaweb.google.com/lh/sredir?uname=111415681122206252267&target=ALBUM&id=5782876990269415361"
+        }],
+        "access": "public",
+        "videostatus": "final",
+        "originalVideo": {
+            "width": 190,
+            "height": 240,
+            "type": "MOV",
+            "duration": 4,
+            "channels": 2,
+            "samplingrate": 22.05,
+            "videoCodec": "SVQ1",
+            "audioCodec": "QDM2",
+            "fps": 12.0
+        },
+        "width": "320",
+        "height": "240",
+        "size": "82395",
+        "timestamp": "1346430971000",
+        "commentingEnabled": "true",
+        "cc": "ALL_RIGHTS_RESERVED",
+        "exif": {
+            "imageUniqueId": "0a4a6dd54389f729d6d6a6580f431154"
+        },
+        "media": {
+            "content": [{
+                "url": "https://lh4.googleusercontent.com/-bi-gy0Rvoe0/UEDn-6vgxKI/AAAAAAAAAUo/6TdoCeKlFFQ/sample_sorenson.jpg",
+                "height": 240,
+                "width": 320,
+                "type": "image/jpeg"
+            }, {
+                "url": "http://redirector.googlevideo.com/videoplayback?id=2969404b99bf6dca&itag=5&source=picasa&cmo=sensitive_content%3Dyes&ip=0.0.0.0&ipbits=0&expire=1349978968&sparams=id,itag,source,ip,ipbits,expire&signature=9C35E0BB768CA3E26D797162550730B2B596195.8B213D9884397CBC422BD01AA117802135F55874&key=lh1",
+                "height": 240,
+                "width": 190,
+                "type": "application/x-shockwave-flash"
+            }, {
+                "url": "http://redirector.googlevideo.com/videoplayback?id=2969404b99bf6dca&itag=18&source=picasa&cmo=sensitive_content%3Dyes&ip=0.0.0.0&ipbits=0&expire=1349978968&sparams=id,itag,source,ip,ipbits,expire&signature=327A0D426A5D2A6379AE1EFEE09E30B0586E3B13.44050FE228F3CCEB74FAA93D8B8BD9553DB85201&key=lh1",
+                "height": 240,
+                "width": 190,
+                "type": "video/mpeg4"
+            }, {
+                "url": "http://redirector.googlevideo.com/videoplayback?id=2969404b99bf6dca&itag=34&source=picasa&cmo=sensitive_content%3Dyes&ip=0.0.0.0&ipbits=0&expire=1349978968&sparams=id,itag,source,ip,ipbits,expire&signature=3949C8DF7A81EC0C4BF28E482957B1BCA60EBDB6.16ABE409452FA8C018B84DC2EE0E5350B8849C90&key=lh1",
+                "height": 240,
+                "width": 190,
+                "type": "application/x-shockwave-flash"
+            }],
+            "description": "",
+            "thumbnail": [{
+                "url": "https://lh4.googleusercontent.com/-bi-gy0Rvoe0/UEDn-6vgxKI/AAAAAAAAAUo/6TdoCeKlFFQ/s640/sample_sorenson.jpg",
+                "height": 240,
+                "width": 320
+            }],
+            "title": "sample_sorenson.mov"
+        },
+        "allowPrints": "true",
+        "allowDownloads": "true",
+        "ccOverride": "false",
+        "htmlCaption": ""
+    }
+}

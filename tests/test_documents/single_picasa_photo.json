@@ -1,0 +1,72 @@
+{
+    "encoding": "UTF-8",
+    "feed": {
+        "id": "https://picasaweb.google.com/data/feed/tiny/user/111415681122206252267/albumid/5064748777194404225/photoid/5064749129381722546",
+        "title": "14-05-07_1132.jpg",
+        "link": [{
+            "rel": "http://schemas.google.com/g/2005#feed",
+            "type": "application/atom+xml",
+            "href": "https://picasaweb.google.com/data/feed/tiny/user/111415681122206252267/albumid/5064748777194404225/photoid/5064749129381722546?alt=jsonm"
+        }, {
+            "rel": "alternate",
+            "type": "text/html",
+            "href": "https://picasaweb.google.com/lh/photo/5noTA8WlLw-AN8z3U2kHYdMTjNZETYmyPJy0liipFm0"
+        }, {
+            "rel": "self",
+            "type": "application/atom+xml",
+            "href": "https://picasaweb.google.com/data/feed/tiny/user/111415681122206252267/albumid/5064748777194404225/photoid/5064749129381722546?alt=jsonm&start-index=1&max-results=1&urlredir=1&thumbsize=640&commentreason=1&fd=shapes"
+        }],
+        "author": [{
+            "type": "owner",
+            "name": "Bayu Adji",
+            "uri": "https://picasaweb.google.com/111415681122206252267",
+            "email": "111415681122206252267",
+            "nickname": "Bayu Adji",
+            "thumbnail": "https://lh3.googleusercontent.com/-PlbEGa3K3j4/AAAAAAAAAAI/AAAAAAAAAAA/N9EJMCeXgBE/s32-c/111415681122206252267.jpg",
+            "user": "111415681122206252267",
+            "link": [{
+                "rel": "http://schemas.google.com/photos/2007#userProfile",
+                "type": "text/html",
+                "href": "https://profiles.google.com/111415681122206252267"
+            }]
+        }],
+        "totalResults": 0,
+        "gphoto$id": "5064749129381722546",
+        "albumId": "5064748777194404225",
+        "albumInfo": [{
+            "id": "5064748777194404225",
+            "title": "sasha",
+            "url": "https://picasaweb.google.com/lh/sredir?uname=111415681122206252267&target=ALBUM&id=5064748777194404225"
+        }],
+        "access": "public",
+        "width": "480",
+        "height": "640",
+        "size": "77468",
+        "timestamp": "1179228799000",
+        "commentingEnabled": "true",
+        "cc": "ALL_RIGHTS_RESERVED",
+        "viewCount": "60",
+        "exif": {
+            "imageUniqueId": "d64691b2cd12c6226a0f4f0f29ed13ba"
+        },
+        "media": {
+            "content": [{
+                "url": "https://lh5.googleusercontent.com/-yMlkp_62dBw/Rkmaf71EObI/AAAAAAAAABA/yxke7sOBIBE/14-05-07_1132.jpg",
+                "height": 512,
+                "width": 384,
+                "type": "image/jpeg"
+            }],
+            "description": "",
+            "thumbnail": [{
+                "url": "https://lh5.googleusercontent.com/-yMlkp_62dBw/Rkmaf71EObI/AAAAAAAAABA/yxke7sOBIBE/s640/14-05-07_1132.jpg",
+                "height": 640,
+                "width": 480
+            }],
+            "title": "14-05-07_1132.jpg"
+        },
+        "allowPrints": "true",
+        "allowDownloads": "true",
+        "ccOverride": "false",
+        "htmlCaption": ""
+    }
+}

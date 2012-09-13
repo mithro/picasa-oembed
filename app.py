@@ -48,6 +48,7 @@ DICT_COMMON = {
 
 
 ALBUM_NAME_URL = 'https://picasaweb.google.com/%(userid)s/%(albumname)s'
+ALBUM_GPLUS_NAME_URL = 'https://plus.google.com/photos/%(userid)s/albums/%(albumname)s'
 
 ALBUM_FEED_URL = 'https://picasaweb.google.com/data/feed/tiny/user/%(userid)s/albumid/%(albumid)s?authuser=0&alt=jsonm&urlredir=1&commentreason=1&fd=shapes&thumbsize=%(maxwidth)s'
 PHOTO_FEED_URL = 'https://picasaweb.google.com/data/feed/tiny/user/%(userid)s/albumid/%(albumid)s/photoid/%(photoid)s?authuser=0&alt=jsonm&urlredir=1&commentreason=1&fd=shapes&thumbsize=%(maxwidth)s&max-results=1'
@@ -71,12 +72,13 @@ def cache(key, func, expire=3600):
     result = func(key)
 
     cachepy.set(skey, result, expiry=expire)
+
     memcache.set(skey, result, time=expire)
     return result
 
 
 def albumname2id(l):
-    url = ALBUM_NAME % l
+    url = ALBUM_NAME_URL % l
     logging.debug('Album url %r', url)
     picasa_data = urllib2.urlopen(url).read()
 
@@ -88,6 +90,7 @@ def oembed_single(l):
     url = PHOTO_FEED_URL % l
     logging.debug('Album url %r', url)
     picasa_data = urllib2.urlopen(url).read()
+
     picasa_json = json.loads(picasa_data)['feed']
 
     r = dict(DICT_COMMON)
@@ -135,7 +138,7 @@ def oembed_album(l):
     logging.debug('Album url %r', url)
     picasa_data = urllib2.urlopen(url).read()
     picasa_json = json.loads(picasa_data)['feed']
-
+    
     r = dict(DICT_COMMON)
     r["type"] = 'rich'
     r["author_name"] = picasa_json['nickname']
