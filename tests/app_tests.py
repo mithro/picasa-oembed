@@ -40,6 +40,11 @@ class TestSearches(unittest.TestCase):
             "http(s)://picasaweb.google.com/123/name")
         self.assertEqual(('123', 'name'), g.groups())
 
+    def test_albumid_only_extract_false(self):
+        g = searches.ALBUMID_ONLY_EXTRACT.search(
+            "https://picasaweb.google.com/111415681122206252267/August31201202")
+        self.assertIsNone(g)
+
     def test_albumid_only_extract(self):
         g = searches.ALBUMID_ONLY_EXTRACT.search(
             "https://plus.google.com/photos/123/albums/456")

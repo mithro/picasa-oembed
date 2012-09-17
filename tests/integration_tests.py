@@ -56,6 +56,17 @@ except ImportError:
 # * https://plus.google.com/photos/{userid}/albums/{albumid}
 # Outputs "rich" element which contains the Picasa album.
 
+import logging
+
+#logging.getLogger().setLevel(logging.DEBUG)
+
+URL_RESULTS = [
+	('https://plus.google.com/photos/100642868990821651444/albums/5720909216955340593/5720909219460239298',''),
+	('https://plus.google.com/photos/111415681122206252267/albums/5782876990269415361',''),
+	('https://picasaweb.google.com/111415681122206252267/August31201202#5782876989650158754',''),
+	('https://picasaweb.google.com/111415681122206252267/August31201202','')
+	]
+
 
 class LiveIntegrationTest(unittest.TestCase):
     def setUp(self):
@@ -64,20 +75,16 @@ class LiveIntegrationTest(unittest.TestCase):
         self.endpoint = oembed.OEmbedEndpoint(LIVE, URLS)
         self.consumer.addEndpoint(self.endpoint)
 
+    
     def test_url(self):
         try:
-            response = self.consumer.embed(
-                'https://plus.google.com/photos/100642868990821651444/albums/5720909216955340593/5720909219460239298')
-            import pprint
-            pprint.pprint(response.getData())
-
-            response = self.consumer.embed(
-                'https://plus.google.com/photos/111415681122206252267/albums/5782876990269415361')
-
-            pprint.pprint(response.getData())
+            for url in URL_RESULTS:
+		response = self.consumer.embed(url[0])
+		import pprint
+		pprint.pprint(response.getData())
         except IOError, e:
             print e
-            print e.geturl()
+	    self.fail("%s - %s " % (url, str(e)))
 
 
 class LocalIntegrationTest(unittest.TestCase):
@@ -88,16 +95,11 @@ class LocalIntegrationTest(unittest.TestCase):
         self.consumer.addEndpoint(self.endpoint)
 
     def test_url(self):
-        try:
-            response = self.consumer.embed(
-                'https://plus.google.com/photos/100642868990821651444/albums/5720909216955340593/5720909219460239298')
-            import pprint
-            pprint.pprint(response.getData())
-
-            response = self.consumer.embed(
-                'https://plus.google.com/photos/111415681122206252267/albums/5782876990269415361')
-
-            pprint.pprint(response.getData())
+	try:
+            for url in URL_RESULTS:
+		response = self.consumer.embed(url[0])
+		#		import pprint
+		#pprint.pprint(response.getData())
         except IOError, e:
             print e
-            print e.geturl()
+	    self.fail("%s - %s " % (url, str(e)))
