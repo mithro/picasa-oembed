@@ -25,16 +25,6 @@ __author__ = "mithro@mithis.com (Tim 'mithro' Ansell)"
 
 import oembed
 
-DEBUG = True
-
-LIVE = 'http://picasaweb-oembed.appspot.com/oembed'
-LOCAL = 'http://localhost:8080/oembed'
-
-URLS = ['http://picasaweb.google.com/*',
-        'https://picasaweb.google.com/*',
-        'http://plus.google.com/photos/*',
-        'https://plus.google.com/photos/*']
-
 try:
     import unittest2 as unittest
 except ImportError:
@@ -56,50 +46,54 @@ except ImportError:
 # * https://plus.google.com/photos/{userid}/albums/{albumid}
 # Outputs "rich" element which contains the Picasa album.
 
-import logging
+DEBUG = True
 
-#logging.getLogger().setLevel(logging.DEBUG)
+LIVE = 'http://picasaweb-oembed.appspot.com/oembed'
+LOCAL = 'http://localhost:8080/oembed'
+
+URLS = ['http://picasaweb.google.com/*',
+        'https://picasaweb.google.com/*',
+        'http://plus.google.com/photos/*',
+        'https://plus.google.com/photos/*']
+
 
 URL_RESULTS = [
 	('https://plus.google.com/photos/100642868990821651444/albums/5720909216955340593/5720909219460239298',''),
 	('https://plus.google.com/photos/111415681122206252267/albums/5782876990269415361',''),
 	('https://picasaweb.google.com/111415681122206252267/August31201202#5782876989650158754',''),
 	('https://picasaweb.google.com/111415681122206252267/August31201202','')
-	]
+]
 
 
 class LiveIntegrationTest(unittest.TestCase):
     def setUp(self):
-        print "Testing against: %s" % LIVE
         self.consumer = oembed.OEmbedConsumer()
         self.endpoint = oembed.OEmbedEndpoint(LIVE, URLS)
         self.consumer.addEndpoint(self.endpoint)
 
-    
     def test_url(self):
         try:
             for url in URL_RESULTS:
-		response = self.consumer.embed(url[0])
-		import pprint
-		pprint.pprint(response.getData())
+                response = self.consumer.embed(url[0])
+                import pprint
+                pprint.pprint(response.getData())
         except IOError, e:
             print e
-	    self.fail("%s - %s " % (url, str(e)))
+            self.fail("%s - %s" % (url, str(e)))
 
 
 class LocalIntegrationTest(unittest.TestCase):
     def setUp(self):
-        print "Testing against: %s" % LOCAL
         self.consumer = oembed.OEmbedConsumer()
         self.endpoint = oembed.OEmbedEndpoint(LOCAL, URLS)
         self.consumer.addEndpoint(self.endpoint)
 
     def test_url(self):
-	try:
+        try:
             for url in URL_RESULTS:
-		response = self.consumer.embed(url[0])
-		#		import pprint
-		#pprint.pprint(response.getData())
+                response = self.consumer.embed(url[0])
+                import pprint
+                pprint.pprint(response.getData())
         except IOError, e:
             print e
-	    self.fail("%s - %s " % (url, str(e)))
+            self.fail("%s - %s" % (url, str(e)))
