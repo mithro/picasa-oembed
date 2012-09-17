@@ -72,7 +72,6 @@ def cache(key, func, expire=3600):
     result = func(key)
 
     cachepy.set(skey, result, expiry=expire)
-
     memcache.set(skey, result, time=expire)
     return result
 
@@ -90,7 +89,6 @@ def oembed_single(l):
     url = PHOTO_FEED_URL % l
     logging.debug('Album url %r', url)
     picasa_data = urllib2.urlopen(url).read()
-
     picasa_json = json.loads(picasa_data)['feed']
 
     r = dict(DICT_COMMON)
@@ -138,7 +136,7 @@ def oembed_album(l):
     logging.info('Album url %r', url)
     picasa_data = urllib2.urlopen(url).read()
     picasa_json = json.loads(picasa_data)['feed']
-    
+
     r = dict(DICT_COMMON)
     r["type"] = 'rich'
     r["author_name"] = picasa_json['nickname']
@@ -164,7 +162,6 @@ def oembed(environ, start_response):
 
     d = cgi.parse_qs(environ['QUERY_STRING'])
 
-    
     input = {}
     input['maxwidth'] = min(640, int(d.get('maxwidth', [2**32])[0]))
     input['maxheight'] = min(480, int(d.get('maxheight', [2**32])[0]))
@@ -203,14 +200,14 @@ def oembed(environ, start_response):
 
     elif albumname_only:
         input['userid'], input['albumname'] = albumname_only.groups()
-    
+
     # Get albumid from albumname
     if input['albumname'] and not input['albumid']:
         logging.debug('Getting albumid from name: %r', input['albumname'])
         input['albumid'] = cache(input, albumname2id)
 
     logging.debug(input)
-    
+
     d = {}
     d['cache_age'] = 3600
     if input.get('userid', None) and input.get('albumid', None) and input.get('photoid', None):
