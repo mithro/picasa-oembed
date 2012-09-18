@@ -23,7 +23,9 @@
 
 __author__ = "mithro@mithis.com (Tim 'mithro' Ansell)"
 
+import os
 import oembed
+import json
 
 try:
     import unittest2 as unittest
@@ -58,10 +60,14 @@ URLS = ['http://picasaweb.google.com/*',
 
 
 URL_RESULTS = [
-	('https://plus.google.com/photos/100642868990821651444/albums/5720909216955340593/5720909219460239298',''),
-	('https://plus.google.com/photos/111415681122206252267/albums/5782876990269415361',''),
-	('https://picasaweb.google.com/111415681122206252267/August31201202#5782876989650158754',''),
-	('https://picasaweb.google.com/111415681122206252267/August31201202','')
+	('https://plus.google.com/photos/100642868990821651444/albums/5720909216955340593/5720909219460239298',
+         'result_integration_plus_photo.json'),
+	('https://plus.google.com/photos/111415681122206252267/albums/5782876990269415361',
+         'result_integration_plus_album.json'),
+	('https://picasaweb.google.com/111415681122206252267/August31201202#5782876989650158754',
+         'result_integration_picasa_photo.json'),
+	('https://picasaweb.google.com/111415681122206252267/August31201202',
+         'result_integration_picasa_album.json')
 ]
 
 
@@ -71,12 +77,29 @@ class LiveIntegrationTest(unittest.TestCase):
         self.endpoint = oembed.OEmbedEndpoint(LIVE, URLS)
         self.consumer.addEndpoint(self.endpoint)
 
+    def load_data(self, filename, type_data='json'):
+        """
+        Load file data.
+        """
+        file_ = open(os.path.join(
+            os.path.dirname(__file__),
+            "test_documents", filename))
+
+        content = file_.read()
+        file_.close()
+
+        if type_data == 'json':
+            return json.loads(content)
+
+        return content
+
     def test_url(self):
         try:
             for url in URL_RESULTS:
                 response = self.consumer.embed(url[0])
-                import pprint
-                pprint.pprint(response.getData())
+                data = response.getData()
+                self.assertEqual(data,
+                                 self.load_data(url[1]))
         except IOError, e:
             print e
             self.fail("%s - %s" % (url, str(e)))
@@ -88,12 +111,29 @@ class LocalIntegrationTest(unittest.TestCase):
         self.endpoint = oembed.OEmbedEndpoint(LOCAL, URLS)
         self.consumer.addEndpoint(self.endpoint)
 
+    def load_data(self, filename, type_data='json'):
+        """
+        Load file data.
+        """
+        file_ = open(os.path.join(
+            os.path.dirname(__file__),
+            "test_documents", filename))
+
+        content = file_.read()
+        file_.close()
+
+        if type_data == 'json':
+            return json.loads(content)
+
+        return content
+
     def test_url(self):
         try:
             for url in URL_RESULTS:
                 response = self.consumer.embed(url[0])
-                import pprint
-                pprint.pprint(response.getData())
+                data = response.getData()
+                self.assertEqual(data,
+                                 self.load_data(url[1]))
         except IOError, e:
             print e
             self.fail("%s - %s" % (url, str(e)))
