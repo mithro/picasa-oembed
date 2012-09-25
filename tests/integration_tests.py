@@ -33,6 +33,16 @@ except ImportError:
     import unittest
 
 
+DEBUG = True
+
+LIVE = 'http://picasaweb-oembed.appspot.com/oembed'
+LOCAL = 'http://localhost:8080/oembed'
+
+URLS = ['http://picasaweb.google.com/*',
+        'https://picasaweb.google.com/*',
+        'http://plus.google.com/photos/*',
+        'https://plus.google.com/photos/*']
+
 # * http(s)://picasaweb.google.com/{userid}/{albumname}
 # Outputs "rich" element which contains the Picasa album.
 
@@ -48,22 +58,13 @@ except ImportError:
 # * https://plus.google.com/photos/{userid}/albums/{albumid}
 # Outputs "rich" element which contains the Picasa album.
 
-DEBUG = True
-
-LIVE = 'http://picasaweb-oembed.appspot.com/oembed'
-LOCAL = 'http://localhost:8080/oembed'
-
-URLS = ['http://picasaweb.google.com/*',
-        'https://picasaweb.google.com/*',
-        'http://plus.google.com/photos/*',
-        'https://plus.google.com/photos/*']
-
-
 URL_RESULTS = [
 	('https://plus.google.com/photos/100642868990821651444/albums/5720909216955340593/5720909219460239298',
          'result_integration_plus_photo.json'),
 	('https://plus.google.com/photos/111415681122206252267/albums/5782876990269415361',
          'result_integration_plus_album.json'),
+        ('https://picasaweb.google.com/111415681122206252267/albumid/5782876990269415361/photoid/5782876989650158754',
+         'result_integration_picasa_photo.json'),
 	('https://picasaweb.google.com/111415681122206252267/August31201202#5782876989650158754',
          'result_integration_picasa_photo.json'),
 	('https://picasaweb.google.com/111415681122206252267/August31201202',
@@ -76,6 +77,8 @@ class LiveIntegrationTest(unittest.TestCase):
         self.consumer = oembed.OEmbedConsumer()
         self.endpoint = oembed.OEmbedEndpoint(LIVE, URLS)
         self.consumer.addEndpoint(self.endpoint)
+        self.maxDiff = None
+
 
     def load_data(self, filename, type_data='json'):
         """

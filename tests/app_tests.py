@@ -118,6 +118,7 @@ class TestApps(unittest.TestCase):
 
         self.mock_data('5064748777194404225',
                        'single_picasa_photo.json')
+    
         url_ = """https://picasaweb.google.com/111415681122206252267/Sasha02#5064749129381722546"""
         input_ = {}
         input_['userid'], input_['albumname'], input_['photoid'] = \
