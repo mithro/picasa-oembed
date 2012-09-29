@@ -48,6 +48,7 @@ DICT_COMMON = {
 
 
 ALBUM_NAME_URL = 'https://picasaweb.google.com/%(userid)s/%(albumname)s'
+ALBUM_GPLUS_NAME_URL = 'https://plus.google.com/photos/%(userid)s/albums/%(albumname)s'
 
 ALBUM_FEED_URL = 'https://picasaweb.google.com/data/feed/tiny/user/%(userid)s/albumid/%(albumid)s?authuser=0&alt=jsonm&urlredir=1&commentreason=1&fd=shapes&thumbsize=%(maxwidth)s'
 PHOTO_FEED_URL = 'https://picasaweb.google.com/data/feed/tiny/user/%(userid)s/albumid/%(albumid)s/photoid/%(photoid)s?authuser=0&alt=jsonm&urlredir=1&commentreason=1&fd=shapes&thumbsize=%(maxwidth)s&max-results=1'
@@ -76,7 +77,7 @@ def cache(key, func, expire=3600):
 
 
 def albumname2id(l):
-    url = ALBUM_NAME % l
+    url = ALBUM_NAME_URL % l
     logging.debug('Album url %r', url)
     picasa_data = urllib2.urlopen(url).read()
 
@@ -132,7 +133,7 @@ def oembed_single(l):
 
 def oembed_album(l):
     url = ALBUM_FEED_URL % l
-    logging.debug('Album url %r', url)
+    logging.info('Album url %r', url)
     picasa_data = urllib2.urlopen(url).read()
     picasa_json = json.loads(picasa_data)['feed']
 
@@ -214,6 +215,7 @@ def oembed(environ, start_response):
         try:
             d.update(cache(input, oembed_single))
         except (urllib2.URLError, IOError), e:
+            logging.error('%s - %s' % (url, str(e)))
             status = '401 Unauthorized'
             d = {}
     elif input.get('userid', None) and input.get('albumid', None):
@@ -221,6 +223,7 @@ def oembed(environ, start_response):
         try:
             d.update(cache(input, oembed_album))
         except (urllib2.URLError, IOError), e:
+            logging.error('%s - %s' % (url, str(e)))
             status = '401 Unauthorized'
             d = {}
     else:
@@ -234,9 +237,9 @@ def oembed(environ, start_response):
     else:
         raise IOError('Unknown format')
 
-    headers.append(('Cache-Control', 'public, max-age=%i, must-revalidate' % d['cache_age']))
+    headers.append(('Cache-Control', 'public, max-age=%i, must-revalidate' % d.get('cache_age',0)))
     headers.append(('Last-Modified', now.strftime(TIME_FMT)))
-    headers.append(('Expires', (now+datetime.timedelta(seconds=d['cache_age'])).strftime(TIME_FMT)))
+    headers.append(('Expires', (now+datetime.timedelta(seconds=d.get('cache_age',0))).strftime(TIME_FMT)))
     headers.append(('Content-Length', str(len(r))))
     start_response(status, headers)
     return [r]

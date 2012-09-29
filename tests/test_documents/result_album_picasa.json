@@ -1,0 +1,13 @@
+{
+    "provider_url": "http://picasaweb.google.com/",
+    "title": "sasha",
+    "html": "\n<embed\n    type=\"application/x-shockwave-flash\"\n    src=\"https://picasaweb.google.com/s/c/bin/slideshow.swf\"\n    width=\"288\" height=\"192\"\n    flashvars=\"host=picasaweb.google.com&captions=1&hl=en_US&feat=flashalbum&RGB=0x000000&feed=https%3A%2F%2Fpicasaweb.google.com%2Fdata%2Ffeed%2Fapi%2Fuser%2F111415681122206252267%2Falbumid%2F5064748777194404225%3Falt%3Drss%26kind%3Dphoto%26hl%3Den_US\"\n    pluginspage=\"http://www.macromedia.com/go/getflashplayer\">\n</embed>\n",
+    "author_name": "Bayu Adji",
+    "height": 480,
+    "width": 640,
+    "version": "1.0",
+    "author_url": "https://plus.google.com/111415681122206252267/posts",
+    "provider_name": "Picasa",
+    "thumbnail_url": "https://lh6.googleusercontent.com/-Jr4ZeQyf0aQ/RkmaLb1EOYE/AAAAAAAAABo/Z5BAoaRjbaY/s160-c/Sasha02.jpg",
+    "type": "rich"
+}

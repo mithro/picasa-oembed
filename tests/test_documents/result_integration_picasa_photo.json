@@ -1,0 +1,15 @@
+{ "author_name" : "Bayu Adji",
+  "author_url" : "https://picasaweb.google.com/111415681122206252267",
+  "cache_age" : 3600,
+  "height" : 240,
+  "html" : "\n<iframe src=\"picasaweb-oembed.appspot.com/static/embed.html#user/111415681122206252267/albumid/5782876990269415361/photoid/5782876989650158754\" style=\"width: 100%; height: 100%;\" ></iframe>\n",
+  "provider_name" : "Picasa",
+  "provider_url" : "http://picasaweb.google.com/",
+  "thumbnail_height" : 240,
+  "thumbnail_url" : "https://lh4.googleusercontent.com/-bi-gy0Rvoe0/UEDn-6vgxKI/AAAAAAAAAUo/6TdoCeKlFFQ/s640/sample_sorenson.jpg",
+  "thumbnail_width" : 320,
+  "title" : "sample_sorenson.mov",
+  "type" : "video",
+  "version" : "1.0",
+  "width" : 320
+}

@@ -1,0 +1,13 @@
+{
+    "provider_url": "http://picasaweb.google.com/",
+    "title": "The Best of 2009",
+    "html": "\n<embed\n    type=\"application/x-shockwave-flash\"\n    src=\"https://picasaweb.google.com/s/c/bin/slideshow.swf\"\n    width=\"288\" height=\"192\"\n    flashvars=\"host=picasaweb.google.com&captions=1&hl=en_US&feat=flashalbum&RGB=0x000000&feed=https%3A%2F%2Fpicasaweb.google.com%2Fdata%2Ffeed%2Fapi%2Fuser%2F115212051037621986145%2Falbumid%2F5416758372025392817%3Falt%3Drss%26kind%3Dphoto%26hl%3Den_US\"\n    pluginspage=\"http://www.macromedia.com/go/getflashplayer\">\n</embed>\n",
+    "author_name": "Guido van Rossum",
+    "height": 480,
+    "width": 640,
+    "version": "1.0",
+    "author_url": "https://plus.google.com/115212051037621986145/posts",
+    "provider_name": "Picasa",
+    "thumbnail_url": "https://lh4.googleusercontent.com/-lenl-F7sguE/SywxCkayXrE/AAAAAAAAI8A/LXCRJrLq9cw/s160-c/TheBestOf2009.jpg",
+    "type": "rich"
+}
